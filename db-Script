@@ -1,0 +1,82 @@
+-- CREATE USER twitteruser;
+-- ALTER USER twitteruser PASSWORD 'twitter';
+
+\c postgres;
+
+DROP DATABASE twitter;
+
+CREATE DATABASE Twitter;
+
+\c twitter;
+
+CREATE TABLE TUser (
+	UID	Bigint	PRIMARY KEY,
+	ScreenName	Character(15)	NOT NULL
+);
+
+CREATE TABLE Tweets (
+	TID	Bigint	PRIMARY KEY,
+	UID	Bigint	REFERENCES TUser(UID),
+	RID	serial	UNIQUE,
+	tweetDate	Date	NOT NULL,
+	tweetTime	Time	NOT NULL,
+	tweetText	Text	NOT NULL,
+	FCount	Integer	NOT NULL,
+	RCount	Integer	NOT NULL
+);
+
+CREATE TABLE URL (
+	RID	Integer	REFERENCES Tweets(RID),
+	link	Text	NOT NULL
+);
+
+CREATE TABLE TweetTags (
+	RID	Integer	REFERENCES Tweets(RID),
+	tagID	Integer	NOT NULL
+);
+
+CREATE TABLE Locations (
+	LocationID	Integer	NOT NULL,
+	Cityname	Character(25)	NOT NULL,
+	Country	Character(25)	NOT NULL,
+	PRIMARY KEY (LocationID)
+);
+
+CREATE TABLE DateTimeList (
+	DateTimeID	Serial	PRIMARY KEY,
+	trendDate	Date	NOT NULL,
+	trendTime	Time	NOT NULL
+);
+
+CREATE TABLE Hashtag (
+	tagID	serial	PRIMARY KEY,
+	tagName	Character(25)	NOT NULL
+);
+
+CREATE TABLE Trending (
+	TrendID	Serial	PRIMARY KEY NOT NULL,
+	DateTimeID	Integer	REFERENCES DateTimeList(DateTimeID),
+	LocationID	Integer	NOT NULL,
+	Volume	Integer	NOT NULL,
+	tagID	Integer	NOT NULL
+);
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public To twitteruser;
+
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO twitteruser;
+
+DO $$
+DECLARE
+    tables CURSOR FOR
+        SELECT tablename
+        FROM pg_tables
+        WHERE schemaname = 'public'
+        ORDER BY tablename;
+BEGIN
+    FOR table_record IN tables LOOP
+        EXECUTE 'ALTER TABLE ' || table_record.tablename || ' SET (autovacuum_vacuum_scale_factor = 0.0)';  
+		EXECUTE 'ALTER TABLE ' || table_record.tablename || ' SET (autovacuum_vacuum_threshold = 5000)';  
+		EXECUTE 'ALTER TABLE ' || table_record.tablename || ' SET (autovacuum_analyze_scale_factor = 0.0)';  
+		EXECUTE 'ALTER TABLE ' || table_record.tablename || ' SET (autovacuum_analyze_threshold = 5000)'; 
+    END LOOP;
+END$$;

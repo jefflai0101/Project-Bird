@@ -1,0 +1,22 @@
+DO $$
+DECLARE
+    tables CURSOR FOR
+        SELECT tablename
+        FROM pg_tables
+        WHERE schemaname = 'public'
+        ORDER BY tablename;
+    nbRow int;
+BEGIN
+    FOR table_record IN tables LOOP
+        EXECUTE 'SELECT count(*) FROM ' || table_record.tablename INTO nbRow;
+        raise notice 'Value: %', nbRow;
+    END LOOP;
+END$$;
+
+ps -axww | grep autovacuum
+
+SELECT schemaname, relname, last_vacuum, last_autovacuum, vacuum_count, autovacuum_count FROM pg_stat_user_tables;
+
+CREATE INDEX tagName_index ON hashtag (tagName);
+CREATE INDEX UID_index ON TUser (UID);
+CREATE INDEX TID_index ON Tweets (TID);

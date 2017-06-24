@@ -1,0 +1,6 @@
+{
+	"fromAddress" : "",
+	"toAddress" : "",
+	"emailPassword" : "",
+	"reportHours" : [8, 12, 18, 23]
+}
