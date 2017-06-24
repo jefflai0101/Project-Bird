@@ -216,7 +216,7 @@ class tweetCollect(object):
 
 			for eImage in eImages:
 				# This example assumes the image is in the current directory
-				imageName = 'Trending-%s.png' % eImage
+				imageName = str(timeID)+'-Trending-%s.png' % eImage
 				fp = open(os.path.join('Charts', imageName), 'rb')
 				msgImage = MIMEImage(fp.read())
 				fp.close()
@@ -488,7 +488,7 @@ class tweetCollect(object):
 			time.sleep(self.timeDiff(wakeTime, sleepTime))
 
 #===============================================================================================================================================
-	def getTrendSummary(self, sleepTime=3600):
+	def getTrendSummary(self, sleepTime=1800):
 		# Schedule for specific time of day to run
 		toReport = True
 		while (True):
@@ -504,7 +504,7 @@ class tweetCollect(object):
 						print('[%s][%s] Trending Report' % (self.obtainDT(), '*End*'))
 				else:
 					if (not toReport): toReport = True
-					sleepTime = 1800 if (currentTime.hour+1 in self.targetTime) else 3600
+					sleepTime = 900 if (currentTime.hour+1 in self.targetTime) else 1800
 			except:
 				print('[%s][%s] Trending Report' % (self.obtainDT(), 'Error'))
 			
