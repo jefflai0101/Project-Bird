@@ -110,7 +110,7 @@ class tweetCollect(object):
 	def getAccounts(self):
 		with open(os.path.join('Settings','accounts')) as accounts:
 			for account in accounts:
-				self.twitterAccounts.append(account.replace('\n',''))
+				if (account not in self.twitterAccounts): self.twitterAccounts.append(account.replace('\n',''))
 
 #===============================================================================================================================================
 	def getDBInfo(self):
@@ -466,6 +466,7 @@ class tweetCollect(object):
 					self.trendingTags(targetID)
 					self.dictMinusOne('trends_place')
 				print('[%s][%s] Trending search' % (self.obtainDT(), '*End*'))
+				self.readableRates()
 			except:
 				print('[%s][%s] Trending search' % (self.obtainDT(), 'Error'))
 			time.sleep(self.timeDiff(wakeTime, sleepTime))
@@ -483,6 +484,7 @@ class tweetCollect(object):
 						self.userTimeline(twitterAccount)
 						self.dictMinusOne('user_timeline')
 				print('[%s][%s] Timeline search' % (self.obtainDT(), '*End*'))
+				self.readableRates()
 			except:
 				print('[%s][%s] Timeline search' % (self.obtainDT(), 'Error'))
 			time.sleep(self.timeDiff(wakeTime, sleepTime))
